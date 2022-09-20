@@ -1,0 +1,1 @@
+web: gunicorn xclusive.wsgi
