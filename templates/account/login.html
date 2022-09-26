@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-8 mt-3 offset-md-2">
+      <h3>{% trans "Sign In" %}</h3>
+      <p>{% blocktrans %}Welcome back to the Xclusive|star blog. To leave a comment or like a post, please log in. If you
+        have not created an account yet, then <a class="link" href="{{ signup_url }}">sign up</a>
+        first.{% endblocktrans %}</p>
+      </div> 
+  </div>
+
+<div class="row">
+  <div class="col-md-8 mt-3 offset-md-2">
+<form class="login" method="POST" action="{% url 'account_login' %}">
+  {% csrf_token %}
+  {{ form.as_p }}
+  {% if redirect_field_value %}
+  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+  {% endif %}
+  <button class="btn btn-signup right" type="submit">{% trans "Sign In" %}</button>
+</form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+<!-- 
+  CUSTOMISING this template:
+  1. remove account from "account_base.html"
+  
+  2. We deleted the social account part from this template because we're not going to be using that: 
+  right down here to the else statement we can delete all of that. 
+  Let's take off the end if as well underneath there, so that we're not causing any errors. 
+  
+  3.We also deleted our forgot password link because we're not going to be using that in this particular project; 
+  we'll cover that in  detail in our e-commerce module. 
+  
+  4. Adding some standard Bootstrap classes.
+  using emmet shortcut: ".container>.row>.col-md-8.mt-3.offset-md-2"
+  i. create a container
+  ii. add a row inside that container,  
+  iii. a standard md8 column, which has a top margin set, and an offset of two, so that it's centered. 
+  iv. move all the code into colunm section
+  v. change the h1 to h3
+  vi. change  the text in the paragraph as well to match what we had on our example login page: 
+  from blocktrans opening to closing.
+
+  b. create another row and another column that will contain our login form.
+  it's going to be a row, it's  going to be a column with the width of 8, and it's 
+  going to have the same top margin,  and the same offset so that it's centered.
+  change the class of  my button here now to a standard Bootstrap class.
+-->

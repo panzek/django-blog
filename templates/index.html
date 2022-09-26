@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid">
+    <div class="row">
+
+        <!-- Blog Entries Column -->
+        <div class="col-12 mt-3 left">
+            <div class="row">
+                {% for post in post_list %}
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="image-container">
+                                {% if "placeholder" in post.featured_image.url %}
+                                <img class="card-img-top"
+                                    src="https://codeinstitute.s3.amazonaws.com/fullstack/blog/default.jpg">
+                                {% else %}
+                                <img class="card-img-top" src=" {{ post.featured_image.url }}">
+                                {% endif %}
+                                <div class="image-flash">
+                                    <p class="author">Author: {{ post.author }}</p>
+                                </div>
+                            </div>
+                            <a href="{% url 'post_detail' post.slug %} " class="post-link"> 
+                                <!-- notice that post_detail name matches the name we gave to our url in the urls.py file, and accept "post.slug" as an argument -->
+                                <h2 class="card-title">{{ post.title }}</h2>
+                                <p class="card-text">{{ post.excerpt }}</p>
+                            </a>
+                            <hr />
+                            <p class="card-text text-muted h6">{{ post.created_on}} <i class="far fa-heart"></i>
+                                {{ post.number_of_likes }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% if forloop.counter|divisibleby:3 %}
+            </div>
+            <div class="row">
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% if is_paginated %}
+    <!-- 
+        Below is standard "pagination" code from Django ListView. 
+        It is a boilerplate you can use in your own projects
+    -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li><a href="?page={{ page_obj.previous_page_number }}" class="page-link">&laquo; PREV </a></li>
+            {% endif %}
+            {% if page_obj.has_next %}
+            <li><a href="?page={{ page_obj.next_page_number }}" class="page-link"> NEXT &raquo;</a></li>
+
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{%endblock%}
+
+<!--
+    We're going to use some advanced features of the "Django Templating language" in  order to format our post list. 
+    we create a for loop to iterate through the list of posts that will be passed in from our view. 
+
+    we use the built-in loop counter to close the existing row div, and add a new one after three 
+    posts have been displayed. In other words, Django has a built-in  counter method on our for loop, 
+    when it's evenly divisible by three, then we're  going to close our row class and add a new one.
+    
+    if the word "placeholder" is found in the URL (remember that's our default if we don't supply an image), 
+    then, we'll assume that there is no featured image, so we'll just load a default placeholder image. 
+    Otherwise, we'll use the image that we've uploaded and we'll do that using the double curly bracket notation. 
+
+    "{{ post.featured_image.url }}":
+    Remember that the curly brackets followed by the percent sign indicates a control statement. Whereas, double 
+    curly braces inserts the content into the html. So here we're inserting our URL from our featured image. 
+    After the "endif" tag, we'll just add our image flash div with the author details.
+
+    We put in a horizontal rule that's going to go underneath the link and a little bit of Font Awesome  
+    code here as well, to display our heart sign and then the number of likes.
+
+    When we have more than six posts on our blog, we want them to appear on an extra page.  
+
+    This done, we need to wire up our URLs. So we go create a "urls.py" file in the blog directory.
+    This will be different from the "urls.py" Django created for us when we run the startproject command.
+-->

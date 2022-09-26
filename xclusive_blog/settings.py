@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 import os
 import dj_database_url
+from django.contrib.messages import constants as messages
 if os.path.isfile('env.py'):
     import env # noqa
 # Our "env.py" file won’t exist in production since it’s automatically in the .gitignore file. We don’t want 
@@ -30,9 +31,15 @@ TEMPLATES_DIRS = os.path.join(BASE_DIR, 'templates')
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['xclusive-blog.herokuapp.com', 'localhost']
+X_FRAME_OPTIONS = 'SAMEORIGIN' 
+# So what does this do? Well if we didn't set this, then our summer note editor would no longer work 
+# when we deploy the project. That's because of a security feature known as Cross-Origin Resource Sharing 
+# or CORS for short. CORS tells the browser what  resources are permitted to be loaded. Without this setting, 
+# our browser wouldn't  be able to load the Summernote editor, which would render our blog a little useless.
+
+ALLOWED_HOSTS = ['xclusive-blog.herokuapp.com', '127.0.0.1']
 
 
 # Application definition
@@ -43,11 +50,51 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.sites',
     'cloudinary_storage',
     'django.contrib.staticfiles',
     'cloudinary',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'django_summernote',
+    'crispy_forms',
     'blog',
 ]
+
+# add in the all auth apps that we've just installed: 
+# first, we need to add django.contrib.sites, which is a built-in django package, and 
+# then our "allauth" packages - "allauth, allauth.account, and allauth.socialaccount."
+
+SITE_ID = 1
+
+# we add a new section, site id equals to 1. This is so that django can handle multiple sites from one 
+# database now of course we only have one site here using our one database but we'll still need 
+# to explicitly tell django the site number so site underscore id equals one.
+
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+
+MESSAGE_TAGS = {
+        messages.DEBUG: 'alert-info',
+        messages.INFO: 'alert-info',
+        messages.SUCCESS: 'alert-success',
+        messages.WARNING: 'alert-warning',
+        messages.ERROR: 'alert-danger',
+    }
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+# we also need to add in another new section, the redirection urls, too so that after we've logged in 
+# and logged out, the site will redirect us to the home page 
+
+# message has a built-in tag to  indicate the category of the message - is it a warning or an error? 
+# Is it indicating a success or is it just giving info to the user?
+# We assign these tags to different Bootstrap classes so that the color of our message will  change according to its category.
+# as you can see, each of these different tags is  set to a different Bootstrap class.
+
+#  tell Crispy to use  Bootstrap classes for formatting
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
